@@ -101,6 +101,7 @@ class MatchThree:
                     j += 1
 
     # Надо чета лютое придумать как их вниз двигать
+
     def move_cells(self):
         pass
 
