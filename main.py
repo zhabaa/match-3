@@ -52,7 +52,6 @@ class MatchThree:
                     )
 
             pygame.display.flip()
-            self.check_board()
 
     def change_chars(self, i, j):
         if not self.selected:
@@ -66,6 +65,7 @@ class MatchThree:
                 self.board[i][j], self.board[di][dj] = self.board[di][dj], self.board[i][j]
                 self.selected = None
                 self.moves += 1
+                self.update_board()
 
     def get_cell(self, pos):
         x, y = pos
@@ -73,36 +73,28 @@ class MatchThree:
         i = y // CELL_SIZE
         return i, j
 
-    def check_neighbours(self, row, col):
-        x, y = row, col
+    def transposed(self):
+        self.board = [[*col] for col in zip(*self.board)]
 
-        gem = self.board[x][y]
-        try:
-            if self.board[x + 1][y] == gem and self.board[x - 1][y] == gem:
-                self.board[x - 1][y] = MAIN_COLORS['black']
-                self.board[x + 1][y] = MAIN_COLORS['black']
-                self.board[x][y] = MAIN_COLORS['black']
+    def update_board(self):
+        self.replace_sequence()
+        self.transposed()
+        self.replace_sequence()
+        self.transposed()
 
-            elif self.board[x][y + 1] == gem and self.board[x][y - 1] == gem:
-                self.board[x][y - 1] = MAIN_COLORS['black']
-                self.board[x][y + 1] = MAIN_COLORS['black']
-                self.board[x][y] = MAIN_COLORS['black']
-
-        except Exception as ex:
-            pass
-    # Вот блять эта темка для проверни на продрял чтобы по строчке и не ебаться с соседями
-    # Надо бы
-    # def transposed(self, matrix):
-    #     return [[*col] for col in zip(*matrix)]
-    #
-    # def rot90(self, matrix):
-    #     return list(map(reversed, self.transposed(matrix)))
-
-    def check_board(self):
-        for j, row in enumerate(self.board):
-            for i, col in enumerate(row):
-                if self.check_neighbours(i, j):
-                    pass
+    def replace_sequence(self):
+        for row in self.board:
+            j = 0
+            while j < len(row):
+                count = 1
+                while j + count < len(row) and row[j] == row[j + count]:
+                    count += 1
+                if count > 2:
+                    for k in range(j, j + count):
+                        row[k] = MAIN_COLORS['black']
+                    j += count
+                else:
+                    j += 1
 
 
 if __name__ == '__main__':
