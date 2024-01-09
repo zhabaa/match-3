@@ -65,7 +65,9 @@ class MatchThree:
                 self.board[i][j], self.board[di][dj] = self.board[di][dj], self.board[i][j]
                 self.selected = None
                 self.moves += 1
-                self.update_board()
+                if self.update_board():
+                    self.board[i][j], self.board[di][dj] = self.board[di][dj], self.board[i][j]
+                    self.moves -= 1
 
     def get_cell(self, pos):
         x, y = pos
@@ -77,12 +79,14 @@ class MatchThree:
         self.board = [[*col] for col in zip(*self.board)]
 
     def update_board(self):
-        self.replace_sequence()
+        old_board = self.board
+        self.checking_compliance()
         self.transposed()
-        self.replace_sequence()
+        self.checking_compliance()
         self.transposed()
+        return self.board == old_board
 
-    def replace_sequence(self):
+    def checking_compliance(self):
         for row in self.board:
             j = 0
             while j < len(row):
@@ -95,6 +99,11 @@ class MatchThree:
                     j += count
                 else:
                     j += 1
+
+    # Надо чета лютое придумать как их вниз двигать
+    def move_cells(self):
+        pass
+
 
 
 if __name__ == '__main__':
